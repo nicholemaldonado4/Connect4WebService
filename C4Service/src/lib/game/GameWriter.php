@@ -3,9 +3,8 @@
 // Lab 1 - GameWriter
 // September 7, 2020
 // Dr. Cheon, CS3360
-// GameWriter Creates a game and stores the game in <pid>.txt, where pid is a uniquely calculated pid.
-// Also stores the strategy denoted based on the html query and provides static write file
-// functions to be used by play/index.php.
+// GameWriter creates a game and stores the game in <pid>.txt, where pid is a uniquely
+// calculated pid. Provides static write file functions to be used by play/index.php.
 
 require_once(dirname(__DIR__)."/game/Game.php");
 require_once(dirname(__DIR__)."/response/GameResponsePid.php");
@@ -19,15 +18,13 @@ define('STRATEGY', "strategy");
  * Creates a game and stores the game in <pid>.txt, where pid is a uniquely calculated pid.
  * Also stores the strategy denoted based on the html query. Also provides static write file
  * functions.
- * @param: The pid of the game and whether or not the game is smart (if false, then the game is random).
- * @return: The GameResponse. If an error occurred, a GameResponseReason will be returned, otherwise
- *          a GameResponsePid will be returned.
  */
 class GameWriter {
 
     /*
-     * Overwrites the old game with the new game in <pid>.txt
-     * @param: None.
+     * Overwrites the old game with the new game data in <pid>.txt
+     * @param: the file to write the game to, the $game and a reference to
+     *         a response in the event that an error occurs.
      * @return: None.
      */
     public static function overwriteGame($fileName, Game $game, &$response) {
@@ -36,10 +33,11 @@ class GameWriter {
             return;
         }
 
-        // If we cannot find the file, DO NOT store the game and DO NOT register the move. This is a weird instance
-        // in which we started off with the game file and suddenly it disappeared while making the move.
-        // We do not create new file to store the game because the file seems finicky/user's are trying to cause
-        // the program to crash. Requires a stable file.
+        // If we cannot find the file, DO NOT store the game and DO NOT register the move.
+        // This is a weird instance in which we started off with the game file and suddenly
+        // it disappeared while making the move. We do not create new file to store the
+        // game because the file seems finicky/user's are trying to cause the program to crash.
+        // Requires a stable file.
         $response = new GameResponseReason(false, "Failed to find the file for the Pid.");
     }
 
@@ -67,6 +65,7 @@ class GameWriter {
     private function createFile($strategy, $pid) {
         $fileName = DATA_DIR.$pid.DATA_EXT;
         $gameResponse = null;
+
         // Prevent races. If the file already exists, then return error.
         if (file_exists($fileName) && !is_dir($fileName)) {
             $gameResponse =  new GameResponseReason(false,
@@ -100,6 +99,7 @@ class GameWriter {
         // Otherwise, analyze.
         else {
             $strategy = ucfirst(strtolower($strategy));
+
             // User must provide a strategy to create a new game.
             if (array_key_exists($strategy, StrategyType::STRATEGIES)) {
                 $pid = uniqid();

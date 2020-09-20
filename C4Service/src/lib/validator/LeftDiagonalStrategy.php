@@ -16,6 +16,26 @@ class LeftDiagonalStrategy extends HorizontalStrategy {
     private VerticalBoundary $verticalBoundary;
 
     /*
+     * Sets points back to their original position.
+     * @param: the $col and $row.
+     * @return: None.
+     */
+    function reset($row, $col) {
+        parent::reset($row, $col);
+        $this->setInitialY();
+    }
+
+    /*
+     * Sets the y coordinates initially.
+     * @param: None.
+     * @return: None.
+     */
+    private function setInitialY() {
+        $this->pt1["y"]++;
+        $this->pt2["y"]--;
+    }
+
+    /*
      * Set all boundaries of the board and create the points. Since we are
      * moving to the left diagonally, the left point goes lower in the board and
      * the right point start higher in the board.
@@ -25,8 +45,7 @@ class LeftDiagonalStrategy extends HorizontalStrategy {
     function __construct($col, $row) {
         parent::__construct($col, $row);
         $this->verticalBoundary = new VerticalBoundary($row);
-        $this->pt1["y"]++;
-        $this->pt2["y"]--;
+        $this->setInitialY();
     }
 
     /*
@@ -67,5 +86,4 @@ class LeftDiagonalStrategy extends HorizontalStrategy {
         $this->pt2["y"]--;
     }
 }
-
 ?>

@@ -3,8 +3,7 @@
 // Lab 1 - Game
 // September 7, 2020
 // Dr. Cheon, CS3360
-// Game class stores a board and denotes whether the game is utilizing a smart strategy or random strategy.
-// Game also states if the game has already been completed.
+// Game class to store board and strategy.
 
 require_once(__DIR__."/BoardDimension.php");
 require_once(dirname(__DIR__) . "/strategies/MoveStrategy.php");
@@ -12,8 +11,7 @@ require_once(dirname(__DIR__)."/strategies/SmartStrategy.php");
 require_once(dirname(__DIR__)."/strategies/RandomStrategy.php");
 
 /*
- * Game class stores a board, denotes whether the game is utilizing a smart strategy or random strategy,
- * and states if the game has already been completed. Provides functions to change the board.
+ * Game class stores a board and a smart strategy or random strategy.
  */
 class Game implements JsonSerializable, BoardDimension {
     private array $board;
@@ -23,7 +21,7 @@ class Game implements JsonSerializable, BoardDimension {
      * Implements jsonSerialize since the fields are private (can't use json_encode
      * on private fields unless we implement this method).
      * @param: None
-     * @return: All the variables ($board, $isSmart, $gameDone).
+     * @return: All the variables ($board and $strategy).
      */
     public function jsonSerialize() {
         return get_object_vars($this);
@@ -40,7 +38,7 @@ class Game implements JsonSerializable, BoardDimension {
 
     /*
      * Setter for the field $board.
-     * @param: The boolean value that the field will be assigned to.
+     * @param: A 2D array.
      * @return: None.
      */
     public function setBoard($board) {
@@ -50,7 +48,7 @@ class Game implements JsonSerializable, BoardDimension {
     /*
      * Getter for the field $gameDone.
      * @param: None.
-     * @return: The 2d $board.
+     * @return: The 2D $board.
      */
     public function getBoard() {
         return $this->board;

@@ -3,8 +3,7 @@
 // Lab 1 - GameResponseReason
 // September 7, 2020
 // Dr. Cheon, CS3360
-// Response that stores the string $reason and is derived from GameResponse, so it
-// also stores the $response.
+// Response that stores the string $reason.
 
 require_once(__DIR__."/GameResponse.php");
 

@@ -43,8 +43,8 @@ class RandomStrategy extends MoveStrategy {
             // Once we find a place to put the piece we return.
             if ($newHeight >= 0 && $game->getBoard()[$newHeight][$combos[$randIndex]] == 0) {
                 list($direction, $start) = $moveValidator->validateMove($game->getBoard(),
-                    $combos[$randIndex], new ValidatorSettings(false, false,
-                        PieceColor::COMPUTER));
+                        $combos[$randIndex],
+                        new ValidatorSettings(false, false, PieceColor::COMPUTER));
                 $moveValidator->decrHeightForCol($combos[$randIndex]);
                 $game->addPieceToBoard($newHeight, $combos[$randIndex], PieceColor::COMPUTER);
                 $compMove = $moveValidator->populateMoveFromDirection($direction, $start, $combos[$randIndex]);

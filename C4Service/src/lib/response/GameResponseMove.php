@@ -3,15 +3,14 @@
 // Lab 1 - GameResponseMoveAck
 // September 7, 2020
 // Dr. Cheon, CS3360
-// Response that stores the GameStats $ackMove and is derived from GameResponse, so it
-// also stores the $response.
+// Response that stores the Moves
 
 require_once(__DIR__."/GameResponse.php");
 require_once(dirname(__DIR__) . "/strategies/Move.php");
 
 /*
- * Response that stores the Move $ackMove and is derived from GameResponse, so it
- * also stores the $response.
+ * Response that stores the Moves $ackMove and $move. Since it is derived from
+ * GameResponse, it also stores the $response.
  */
 class GameResponseMove extends GameResponse {
     private Move $ackMove;
@@ -19,8 +18,8 @@ class GameResponseMove extends GameResponse {
 
     /*
      * Constructor that calls the parent constructor for $response and assigns
-     * its field to $ackMove.
-     * @param: The $response and Move $ackMove.
+     * its fields to $ackMove and $move.
+     * @param: The $response and Move $ackMove. The $move parameter is optional.
      * @return: None.
      */
     public function __construct($response, Move $ackMove, Move $move = null) {
@@ -32,7 +31,8 @@ class GameResponseMove extends GameResponse {
     }
 
     /*
-     * Overrides jsonSerialize and calls the parent first to have the $response before $ackMove.
+     * Overrides jsonSerialize and calls the parent first to have the
+     * $response before $ackMove $move if it exists.
      * @param: None.
      * @return: An array with the $response before the GameStats for moveAck.
      */

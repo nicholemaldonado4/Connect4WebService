@@ -11,6 +11,10 @@
 require_once(__DIR__."/PieceColor.php");
 require_once(__DIR__."/Direction.php");
 
+/*
+ * Stores a blockRequest and reply and the piece color
+ * to place in the board.
+ */
 class ValidatorSettings implements PieceColor {
     private bool $blockRequest;
     private bool $blockReply;

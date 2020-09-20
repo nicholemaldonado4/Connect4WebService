@@ -12,10 +12,14 @@ require_once(dirname(__DIR__)."/validator/PieceColor.php");
 require_once(dirname(__DIR__)."/validator/Direction.php");
 require_once(dirname(__DIR__)."/validator/MoveValidator.php");
 
+/*
+ * MoveStrategy that serves as the base class for RandomStrategy and
+ * SmartStrategy - the two ways that a computer can use to select a move.
+ */
 abstract class MoveStrategy implements BoardDimension, PieceColor, Direction, JsonSerializable {
 
     /*
-     * Pieck the slot to move the connect four piece.
+     * Pick the slot to move the connect four piece.
      * @param: The Game with the board, the MoveValidator to verify the move, and the Move to
      *         be populated.
      * @return: None.

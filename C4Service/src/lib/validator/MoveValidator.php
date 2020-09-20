@@ -15,6 +15,8 @@ require_once(__DIR__."/HorizontalStrategy.php");
 require_once(__DIR__."/LeftDiagonalStrategy.php");
 require_once(__DIR__."/RightDiagonalStrategy.php");
 require_once(__DIR__."/PieceColor.php");
+require_once(__DIR__."/Precedence.php");
+require_once(__DIR__."/Record.php");
 
 /*
  * Verifies if a move could result in a winning move, and if requested a blocking move.
@@ -56,7 +58,6 @@ class MoveValidator implements BoardDimension, PieceColor, Direction {
      */
     public function decrHeightForCol($col) {
         $this->heights[$col]--;
-//        var_dump($this->heights);
     }
 
     /*
@@ -66,7 +67,6 @@ class MoveValidator implements BoardDimension, PieceColor, Direction {
      */
     public function incrHeightForCol($col) {
         $this->heights[$col]++;
-//        var_dump($this->heights);
     }
 
     /*
@@ -77,10 +77,10 @@ class MoveValidator implements BoardDimension, PieceColor, Direction {
      */
     private function verticalMoveHelper(array $board, $col, $pieceColor) {
         $row = $this->heights[$col];
-        $count = 0;
+        $count = 1;
 
         // Count the number of same colored pieces until we find 3 or a different piece color.
-        while ($row < BoardDimension::HEIGHT && $count < 3 && $board[$row][$col] == $pieceColor) {
+        while ($row < BoardDimension::HEIGHT && $count < 4 && $board[$row][$col] == $pieceColor) {
             $row++;
             $count++;
         }
@@ -97,107 +97,92 @@ class MoveValidator implements BoardDimension, PieceColor, Direction {
      *          then return true and set reply to true. Otherwise, return false.
      */
     private function verticalMove(array $board, $col, ValidatorSettings $validatorSettings) {
+        // VerticalMove counter will return a count number. If count is less than 4,
+        // and block requested then do so.
+        // If found block, then return count of that block.
+        // If !found block and count == 3, then return precedence as 2.5
+        // Otherwise, return precedence of orig non block move.
+
         $count = $this->verticalMoveHelper($board, $col, $validatorSettings->getPieceColor());
 
         // If the count was 0, then we know that the first piece down did not match the pieceColor. If a block
         // was requested, check to see a column of three user color pieces exist.
-        if ($count == 0 && $validatorSettings->getBlockRequest()) {
+        if ($count <= 1 && $validatorSettings->getBlockRequest()) {
             $validatorSettings->togglePieceColor();
-            $count = $this->verticalMoveHelper($board, $col, $validatorSettings->getPieceColor());
+            $blockCount = $this->verticalMoveHelper($board, $col, $validatorSettings->getPieceColor());
             $validatorSettings->togglePieceColor();
 
             // If three consecutive, user color pieces were found, set BlockReply to true.
-            if ($count == 3) {
+            if ($blockCount == 4) {
                 $validatorSettings->setBlockReply(true);
             }
         }
-        return $count == 3;
+        return $count;
     }
 
     /*
-     * Radiates outward in a direction specified by $moveStrat. If a block is requested and
-     * a possible block could occur, it is evaluated.
+     * Radiates outward in a direction specified by $moveStrat.
      * @param: The board, validator settings, and the move strategy that will be applied.
      * @return: None.
      */
-    private function rippleMoveHelper(array $board, ValidatorSettings $validatorSettings, HorizontalStrategy $moveStrat) {
+    private function rippleMoveHelper(array $board, $pieceColor, HorizontalStrategy $moveStrat) {
         $count = 1;
-//        echo "here</br>";
 
         // Radiate outwards looking for same colored pieces.
-        while ($moveStrat->compareBoth() && $moveStrat->getFromPt1($board) == $moveStrat->getFromPt2($board) &&
-            $moveStrat->getFromPt1($board) == $validatorSettings->getPieceColor() && $count < 4) {
+        while ($moveStrat->compareBoth() &&
+                $moveStrat->getFromPt1($board) == $moveStrat->getFromPt2($board) &&
+                $moveStrat->getFromPt1($board) == $pieceColor && $count < 4) {
             $moveStrat->updateBoth();
             $count+=2;
-//            echo "In big loop";
         }
-        if ($count == 4) {
-            return true;
+        if ($count >= 4) {
+            return $count;
         }
-//        $prevPieceColor = $validatorSettings->getPieceColor();
-//        echo "here 2";
-//        // If computer and $count == 1, then we know that the left and right had different colors then we were expecting
-//        // so change colors and try again (Convenient because users need the two while loops below and are expected
-//        // to do one or the other. For color switch, both loops could be used).
-//        if ($validatorSettings->getBlockRequest() && !$moveStrat->comparePt1() && !$moveStrat->comparePt2()) {
-//            echo "Changed colors";
-//            $validatorSettings->togglePieceColor();
-//        }
 
         // If we can evaluate the pieces more to the left or more to the right, then do so.
-        while ($moveStrat->comparePt1() && $moveStrat->getFromPt1($board) == $validatorSettings->getPieceColor() &&
-            $count < 4) {
+        while ($moveStrat->comparePt1() && $moveStrat->getFromPt1($board) == $pieceColor &&
+                $count < 4) {
             $moveStrat->updatePt1();
             $count++;
-//            echo "In left";
         }
-        while ($moveStrat->comparePt2() && $moveStrat->getFromPt2($board) == $validatorSettings->getPieceColor() &&
-            $count < 4) {
+        while ($moveStrat->comparePt2() && $moveStrat->getFromPt2($board) == $pieceColor &&
+                $count < 4) {
             $moveStrat->updatePt2();
             $count++;
-//            echo "In right count: $count";
         }
-
-        // If we changed piece colors, set the reply to true. In all instances set pieceColor
-        // back to its original color.
-//        if ($prevPieceColor != $validatorSettings->getPieceColor()) {
-//            echo "in here: $count";
-//            if ($count == 4) {
-//                echo "setting block reply";
-//                $validatorSettings->setBlockReply(true);
-//            }
-//            $validatorSettings->togglePieceColor();
-//        }
-        return $count == 4;
-//        if ($count == 4) {
-//            if ($prevPieceColor != $validatorSettings->getPieceColor()) {
-//                $validatorSettings->setBlockReply(true);
-//                $validatorSettings->togglePieceColor();
-//            }
-//            return true;
-//        }
-//        if ($prevPieceColor != $validatorSettings->getPieceColor()) {
-//            $validatorSettings->togglePieceColor();
-//        }
-//        return false;
+        if ($count > Precedence::FOUR) {
+            $count = Precedence::FOUR;
+        }
+        return $count;
     }
 
-    private function rippleMove(array $board, ValidatorSettings $validatorSettings, HorizontalStrategy $moveStrat) {
-        $count = $this->rippleMoveHelper($board, $validatorSettings, $moveStrat);
+    private function rippleMove(array $board, ValidatorSettings $validatorSettings,
+                                HorizontalStrategy $moveStrat, $col) {
+        // RippleMove counter will return a count number. If count is less than 4,
+        // and block requested then do so.
+        // If found block, then return count of that block.
+        // If !found block and count == 3, then return precedence as 2.5
+        // Otherwise, return precedence of orig non block move.
 
-        // If the count was 0, then we know that the first piece down did not match the pieceColor. If a block
-        // was requested, check to see a column of three user color pieces exist.
-        if ($count != 4 && $validatorSettings->getBlockRequest()) {
-            $validatorSettings->togglePieceColor();
-            $count = $this->rippleMoveHelper($board, $validatorSettings, $moveStrat);
-            $validatorSettings->togglePieceColor();
+        $count = $this->rippleMoveHelper($board, $validatorSettings->getPieceColor(), $moveStrat);
 
-            // If three consecutive, user color pieces were found, set BlockReply to true.
-            if ($count == 4) {
+        //  If a block was requested and we could not find a regular win move,
+        // check to see a block move could occur.
+        if ($count < 4 && $validatorSettings->getBlockRequest()) {
+            $validatorSettings->togglePieceColor();
+            $moveStrat->reset($col, $this->heights[$col] - 1);
+            $blockCount = $this->rippleMoveHelper($board, $validatorSettings->getPieceColor(), $moveStrat);
+            $validatorSettings->togglePieceColor();
+//            echo "in block: blockCount= $blockCount , count = $count </br>";
+            // If found a move, set block reply to true.
+            if ($blockCount == 4) {
                 $validatorSettings->setBlockReply(true);
             }
+            if ($blockCount == 3 && $count < $blockCount) {
+                $count = ($moveStrat->check($this->heights)) ? $count = Precedence::TWO_LARGE : $count = Precedence::TWO_HALF;
+            }
         }
-        return $count == 4;
+        return $count;
     }
 
     /*
@@ -217,7 +202,8 @@ class MoveValidator implements BoardDimension, PieceColor, Direction {
 
     /*
      * Creates an array of (col,row, col + 1, row, ....) for four pieces.
-     * @param: The starting $col where the four pieces are arranged horizontally (left to right).
+     * @param: The starting $col where the four pieces are arranged
+     *         horizontally (left to right) and the $row.
      * @return: The array of the columns and rows of the four pieces arranged horizontally.
      */
     private function buildHorizontalRows($col, $row) {
@@ -231,7 +217,8 @@ class MoveValidator implements BoardDimension, PieceColor, Direction {
 
     /*
      * Creates an array of (col,row, col + 1, row + 1, ....) for four pieces.
-     * @param: The starting $col where the four pieces are arranged diagonally to the right.
+     * @param: The starting $col where the four pieces are arranged
+     *         diagonally to the right and the $row.
      * @return: The array of the columns and rows of the four pieces arranged diagonally to the right.
      */
     private function buildRightDiagRows($col, $row) {
@@ -245,7 +232,8 @@ class MoveValidator implements BoardDimension, PieceColor, Direction {
 
     /*
      * Creates an array of (col,row, col - 1, row - 1, ....) for four pieces.
-     * @param: The starting $col where the four pieces are arranged diagonally to the left.
+     * @param: The starting $col where the four pieces are arranged diagonally
+     *         to the left and the $row.
      * @return: The array of the columns and rows of the four pieces arranged diagonally to the left.
      */
     private function buildLeftDiagRows($col, $row) {
@@ -282,6 +270,9 @@ class MoveValidator implements BoardDimension, PieceColor, Direction {
     public function populateMoveFromDirection($direction, $start, $col) {
         $row = [];
         $isWin = true;
+
+        // HORIZONTAL, LEFTDIAG, and RIGHTDIAG, all require the height of the
+        // $col to populate the row.
         switch ($direction) {
             case Direction::VERTICAL:
                 $row = $this->buildVerticalRows($start);
@@ -289,10 +280,10 @@ class MoveValidator implements BoardDimension, PieceColor, Direction {
             case Direction::HORIZONTAL:
                 $row = $this->buildHorizontalRows($start, $this->heights[$col]);
                 break;
-            case Direction::LEFTDIAG:
+            case Direction::LEFT_DIAG:
                 $row = $this->buildLeftDiagRows($start, ($this->heights[$col] + ($col - $start)));
                 break;
-            case Direction::RIGHTDIAG:
+            case Direction::RIGHT_DIAG:
                 $row = $this->buildRightDiagRows($start, ($this->heights[$col] - ($col - $start)));
                 break;
             case Direction::NONE:
@@ -302,67 +293,124 @@ class MoveValidator implements BoardDimension, PieceColor, Direction {
         if (!$isWin) {
             $isDraw = $this->checkDraw();
         }
-        return Move::createNewMove($col, $isWin, $isDraw, $row);
+        return new Move($col, $isWin, $isDraw, $row);
     }
 
     /*
      * Validates if a piece added at $col will lead to win. If a block is requested and found, then
      * will reply that the move will result in a block, if the move will not result in a win.
      * @param: None.
-     * @return: [direction, start]. If the direction == NONE and $vaidatorSettings' blockReply is true, then the
-     *          move will result in a block. If $validatorSettings' blockReply is false and direction == NONE, then
-     *          the move will not result in a move or a block. In all instances, if direction != NONE, then
-     *          the move will result in a win, in the returned direction. start denotes where we should populate the
-     *          row of winning col,row pairs.
+     * @return: [direction, start]. If the direction == NONE and $vaidatorSettings' blockReply is true,
+     *          then the move will result in a block. If $validatorSettings' blockReply is false
+     *          and direction == NONE, then the move will not result in a move or a block. In all
+     *          instances, if direction != NONE, then the move will result in a win, in the returned
+     *          direction. start denotes where we should populate the row of winning col,row pairs.
      */
     public function validateMove(array $board, $col, ValidatorSettings $validatorSettings) {
-        echo "col: $col</br></br>";
+//        echo "col: $col </br>";
+        $maxBlockPrecedence = Precedence::NONE;
+        $maxPrecedence = Precedence::NONE;
+        $validatorSettingsCopy = clone $validatorSettings;
 
-        // Check vertical. If the move is a winning move, return the direction.
-        if ($this->verticalMove($board, $col, $validatorSettings)) {
-            if ($validatorSettings->getBlockRequest() && $validatorSettings->getBlockReply()) {
-
-                // Found a block move. That is enough for now. See if the move can be a winning move.
-                $validatorSettings->setBlockRequest(false);
+        // VeriticalMove returns precedence, if precedence == 4, then return as win:
+        // [Direction::Vertical, $col]
+        // If blockRequested and block reply set, then save precedence of block,
+        // and set blockReply() to true. ONLY set blockRequest to false if
+        // blockrequested and reply set to true and precedence == 3.
+        // Otherwise, if not winning move, then just save precedence if > max.
+//        echo "Vertical: </br>";
+        $precedence = $this->verticalMove($board, $col, $validatorSettingsCopy);
+        if ($validatorSettingsCopy->getBlockRequest() && $validatorSettingsCopy->getBlockReply()) {
+            if ($precedence == Precedence::THREE) {
+                $validatorSettingsCopy->setBlockRequest(false);
             }
-            else {
-                return [Direction::VERTICAL, $col];
-            }
+            $maxBlockPrecedence = max($maxBlockPrecedence, $precedence);
+            $validatorSettingsCopy->setBlockReply(true);
+        }
+        else if ($precedence >= Precedence::FOUR) {
+            return [Direction::VERTICAL, $col];
+        }
+        else {
+//            echo "max precedence before: $maxPrecedence </br>";
+            $maxPrecedence = max($maxPrecedence, $precedence);
+//            echo "max precedence after: $maxPrecedence </br>";
         }
 
-//        $moves = array("HorizontalStrategy"=>Direction::HORIZONTAL,
-//                        "LeftDiagonalStrategy"=>Direction::LEFTDIAG,
-//                        "RightDiagonalStrategy"=>Direction::RIGHTDIAG);
 
-        $moves = array("HorizontalStrategy"=>Direction::HORIZONTAL);
-//            "LeftDiagonalStrategy"=>Direction::LEFTDIAG,
-//            "RightDiagonalStrategy"=>Direction::RIGHTDIAG);
+//        // Check vertical. If the move is a winning move, return the direction.
+//        if ($this->verticalMove($board, $col, $validatorSettings)) {
+//            if ($validatorSettings->getBlockRequest() && $validatorSettings->getBlockReply()) {
+//
+//                // Found a block move. That is enough for now. See if the move can be a winning move.
+//                $validatorSettings->setBlockRequest(false);
+//            }
+//            else {
+//                return [Direction::VERTICAL, $col];
+//            }
+//        }
+
+        $moves = array("HorizontalStrategy"=>Direction::HORIZONTAL,
+            "LeftDiagonalStrategy"=>Direction::LEFT_DIAG,
+            "RightDiagonalStrategy"=>Direction::RIGHT_DIAG);
+
+        // All moves return precedence, if precedence == 4, then return as win:
+        // [$direction, moveStrat->getWinningStart]
+        // If blockRequested and block reply set, then save precedence of block if greater than max,
+        // and set blockReply() to true. ONLY set blockRequest to false if
+        // blockrequested and reply set to true and precedence == 3.
+        // Otherwise, if not winning move, then just save precedence if > max.
 
         // For remaining directions, we do a ripple effect. Start at the piece and radiate out.
         foreach ($moves as $strategy => $direction) {
-//            echo "</br></br>";
+//            echo "$strategy : </br>";
             // If the move is a winning move, return the direction.
             $moveStrat = new $strategy($col, $this->heights[$col] - 1);
-            if ($this->rippleMove($board, $validatorSettings, $moveStrat)) {
-                if ($validatorSettings->getBlockRequest() && $validatorSettings->getBlockReply()) {
-
-                    // Found a block move. That is enough for now. See if the move can be a winning move.
-                    $validatorSettings->setBlockRequest(false);
+            $precedence = $this->rippleMove($board, $validatorSettingsCopy, $moveStrat, $col);
+            if ($validatorSettingsCopy->getBlockRequest() && $validatorSettingsCopy->getBlockReply()) {
+                if ($precedence == Precedence::THREE) {
+                    $validatorSettingsCopy->setBlockRequest(false);
                 }
-                else {
-                    return [$direction, $moveStrat->getWinningStart()];
-                }
+//                echo "max block precedence before: $maxBlockPrecedence</br>";
+                $maxBlockPrecedence = max($maxBlockPrecedence, $precedence);
+//                echo "max block precedence after: $maxBlockPrecedence</br>";
+                $validatorSettingsCopy->setBlockReply(false);
             }
+            else if ($precedence >= Precedence::FOUR) {
+                return [$direction, $moveStrat->getWinningStart()];
+            }
+            else {
+//                echo "max precedence before: $maxPrecedence , precedence= $precedence </br>";
+                $maxPrecedence = max($maxPrecedence, $precedence);
+//                echo "max precedence after: $maxPrecedence </br>";
+            }
+
+
+//            // If the move is a winning move, return the direction.
+//            $moveStrat = new $strategy($col, $this->heights[$col] - 1);
+//            if ($this->rippleMove($board, $validatorSettings, $moveStrat, $col)) {
+//                if ($validatorSettings->getBlockRequest() && $validatorSettings->getBlockReply()) {
+//
+//                    // Found a block move. That is enough for now. See if the move can be a winning move.
+//                    $validatorSettings->setBlockRequest(false);
+//                }
+//                else {
+//                    return [$direction, $moveStrat->getWinningStart()];
+//                }
+//            }
         }
 
         // If a block was found and a winning move was not found, then restore the
         // request.
-        if ($validatorSettings->getBlockReply()) {
-            $validatorSettings->setBlockRequest(true);
+        if ($maxBlockPrecedence > Precedence::NONE) {
+            $validatorSettings->setBlockReply(true);
+//            echo "setting block";
+            $maxPrecedence = $maxBlockPrecedence;
         }
 
+//        echo "Returning max precedence: $maxPrecedence </br>";
+
         // Winning move not found. A block move was found however, if blockReply is true.
-        return [Direction::NONE, $col];
+        return [Direction::NONE, Record::PopulateRecord($col, $maxPrecedence)];
     }
 }
 ?>

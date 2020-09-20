@@ -17,28 +17,15 @@ class Move implements JsonSerializable {
     private array $row;
 
     /*
-     * Default constructor for Move that sets all values to their default values.
-     * @param: None.
-     * @return: None.
-     */
-    public function __construct() {
-        $this->isWin = false;
-        $this->isDraw = false;
-        $this->row = array();
-    }
-
-    /*
-     * Creates a new Move based on the arguments passed in.
+     * Constructor for Move.
      * @param: The $slot, $isWin, $isDraw, and array $rows to populate the Move object.
      * @return: A new Move object based on the arguments passed in.
      */
-    public static function createNewMove($slot, $isWin, $isDraw, $rows){
-        $stats = new self();
-        $stats->slot = $slot;
-        $stats->isWin = $isWin;
-        $stats->isDraw = $isDraw;
-        $stats->row = $rows;
-        return $stats;
+    function __construct($slot, $isWin, $isDraw, $rows){
+        $this->slot = $slot;
+        $this->isWin = $isWin;
+        $this->isDraw = $isDraw;
+        $this->row = $rows;
     }
 
     /*

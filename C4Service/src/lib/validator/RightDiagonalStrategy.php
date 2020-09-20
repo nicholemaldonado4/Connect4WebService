@@ -17,6 +17,27 @@ class RightDiagonalStrategy extends HorizontalStrategy {
     private VerticalBoundary $verticalBoundary;
 
     /*
+     * Sets points back to their original position.
+     * @param: the $col and $row.
+     * @return: None.
+     */
+    function reset($row, $col) {
+        parent::reset($row, $col);
+        $this->setInitialY();
+//        echo "rightdiag: pt1: ({$this->pt1["x"]},{$this->pt1["y"]}), pt2:  ({$this->pt2["x"]},{$this->pt2["y"]})";
+    }
+
+    /*
+     * Sets the y coordinates initially.
+     * @param: None.
+     * @return: None.
+     */
+    private function setInitialY() {
+        $this->pt1["y"]--;
+        $this->pt2["y"]++;
+    }
+
+    /*
      * Set all boundaries of the board and create the points. Since we are
      * moving to the right diagonally, the left point goes up in the board and
      * the right point starts lower in the board.
@@ -26,8 +47,7 @@ class RightDiagonalStrategy extends HorizontalStrategy {
     function __construct($col, $row) {
         parent::__construct($col, $row);
         $this->verticalBoundary = new VerticalBoundary($row);
-        $this->pt1["y"]--;
-        $this->pt2["y"]++;
+        $this->setInitialY();
     }
 
     /*
@@ -68,5 +88,4 @@ class RightDiagonalStrategy extends HorizontalStrategy {
         $this->pt2["y"]++;
     }
 }
-
 ?>

@@ -12,7 +12,7 @@ interface Direction {
     const NONE = 'none';
     const VERTICAL = 'vertical';
     const HORIZONTAL = 'horizontal';
-    const LEFTDIAG = 'leftdiag';
-    const RIGHTDIAG = 'rightdiag';
+    const LEFT_DIAG = 'leftdiag';
+    const RIGHT_DIAG = 'rightdiag';
 }
 ?>

@@ -3,7 +3,8 @@
 // Lab 1 - GameBuilder
 // September 7, 2020
 // Dr. Cheon, CS3360
-// GameBuilder reads a .txt file name after the pid and constructs a Game object based on the file's contents.
+// GameBuilder reads a .txt file name after the pid and constructs a Game
+// object based on the file's contents.
 
 require_once(__DIR__."/Game.php");
 require_once(dirname(__DIR__)."/response/GameResponseReason.php");
@@ -13,12 +14,30 @@ require_once(dirname(__DIR__)."/strategies/MoveStrategy.php");
 require_once(dirname(__DIR__)."/fileutils/FileConstants.php");
 
 /*
- * Reads a .txt file located in ../../src/GameFiles and name after the pid.
+ * Reads a .txt file located in src/writable and name after the pid.
  * The file's contents are used to construct a Game object and Strategy.
  */
 class GameBuilder {
     private Game $game;
     private string $fileName;
+
+    /*
+     * Getter for the field $game.
+     * @param: None.
+     * @return: The $game.
+     */
+    public function getGame() {
+        return $this->game;
+    }
+
+    /*
+     * Getter for the field $fileName.
+     * @param: None.
+     * @return: The $fileName.
+     */
+    public function getFileName() {
+        return $this->fileName;
+    }
 
     /*
      * Builds a game and strategy based on the $gameTxt.
@@ -28,13 +47,10 @@ class GameBuilder {
      */
     private function parseGame($gameTxt, &$response) {
         if (!isset($gameTxt) || !property_exists($gameTxt, "board") ||
-            !property_exists($gameTxt, "strategy") || !property_exists($gameTxt->strategy, "name")) {
+                !property_exists($gameTxt, "strategy") || !property_exists($gameTxt->strategy, "name")) {
             $response = new GameResponseReason(false, "The game file contained malformed data.");
             return false;
         }
-
-        // json_encode converts $isSmart and $gameDone to values 0 or 1, so we compare them with
-        // 0 or 1 to see if the fields are true or false.
         $this->game = Game::buildGame($gameTxt->board, $gameTxt->strategy->name);
         return true;
     }
@@ -63,24 +79,6 @@ class GameBuilder {
         }
         $response = new GameResponseReason(false, "The game file does not exist.");
         return false;
-    }
-
-    /*
-     * Getter for the field $game.
-     * @param: None.
-     * @return: The $game.
-     */
-    public function getGame() {
-        return $this->game;
-    }
-
-    /*
-     * Getter for the field $fileName.
-     * @param: None.
-     * @return: The $fileName.
-     */
-    public function getFileName() {
-        return $this->fileName;
     }
 }
 ?>

@@ -8,7 +8,7 @@
 require_once(dirname(__DIR__)."/game/BoardDimension.php");
 
 /*
- * HorizontalStrategy has two points and moves the points horizontally within the board's range.
+ * HorizontalStrategy has two points and moves the points horizontally.
  */
 class HorizontalStrategy {
     protected int $leftBoundary;
@@ -17,18 +17,34 @@ class HorizontalStrategy {
     protected array $pt2;
 
     /*
-     * Set the left and right boundary of the board. Set pt1 to the left of the column
-     * and pt2 to the right of the col.
-     * @param: The column and row of the piece to insert.
+     * Sets points back to their original position.
+     * @param: the $col and $row.
+     * @return: None.
      */
-    function __construct($col, $row) {
-        $this->leftBoundary = max($col - 3, 0);
-        $this->rightBoundary = min($col + 3, BoardDimension::WIDTH - 1);
-//        echo "pt1 x : ".($col - 1)."</br>";
+    function reset($col, $row){
         $this->pt1 = array("x" => $col - 1, "y" => $row);
         $this->pt2 = array("x" => $col + 1, "y" => $row);
     }
 
+    /*
+     * Set the left and right boundary of the board. Set pt1 to the left of the column
+     * and pt2 to the right of the col.
+     * @param: The column and row of the piece to insert.
+     * @return: None
+     */
+    function __construct($col, $row) {
+        $this->leftBoundary = max($col - 3, 0);
+        $this->rightBoundary = min($col + 3, BoardDimension::WIDTH - 1);
+        self::reset($col, $row);
+
+    }
+
+    /*
+     * Gets the starting point if the move will leave to a winning
+     * move.
+     * @param: None.
+     * @return the x position (col) of the starting point.
+     */
     public function getWinningStart() {
         return $this->pt1["x"] + 1;
     }
@@ -48,7 +64,6 @@ class HorizontalStrategy {
      * @return: True if in the range, false otherwise.
      */
     public function comparePt1() {
-//        echo "compare pt1 x : ".$this->pt1["x"]."</br>";
         return $this->pt1["x"] >= $this->leftBoundary;
     }
 
@@ -58,7 +73,6 @@ class HorizontalStrategy {
      * @return: True if in the range, false otherwise.
      */
     public function comparePt2() {
-//        echo "compare pt2 x : ".$this->pt2["x"]."</br>";
         return $this->pt2["x"] <= $this->rightBoundary;
     }
 
@@ -106,6 +120,17 @@ class HorizontalStrategy {
      */
     public function getFromPt2(array $board) {
         return $board[$this->pt2["y"]][$this->pt2["x"]];
+    }
+
+    public function check(array $heights) {
+//        echo "horizontal check pt1: ({$this->pt1["x"]},{$this->pt1["y"]}), pt2:  ({$this->pt2["x"]},{$this->pt2["y"]})</br>";
+//        echo "heights at pt1: {$heights[$this->pt1["x"]]} </br>";
+//        echo "heights at pt2: {$heights[$this->pt2["x"]]} </br>";
+        if ((static::comparePt1() && $heights[$this->pt1["x"]] == $this->pt1["y"] + 1) ||
+            (static::comparePt2() && $heights[$this->pt2["x"]] == $this->pt2["y"] + 1)) {
+            return true;
+        }
+        return false;
     }
 }
 ?>
