@@ -5,8 +5,8 @@
 // Dr. Cheon, CS3360
 // Response that stores the Moves
 
-require_once(__DIR__."/GameResponse.php");
-require_once(dirname(__DIR__) . "/strategies/Move.php");
+require_once __DIR__."/GameResponse.php";
+require_once dirname(__DIR__)."/strategies/Move.php";
 
 /*
  * Response that stores the Moves $ackMove and $move. Since it is derived from

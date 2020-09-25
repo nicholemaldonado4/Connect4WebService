@@ -5,25 +5,21 @@
 // Dr. Cheon, CS3360
 // Keeps track of two points and moves the points in a left diagonal motion.
 
-require_once(__DIR__."/HorizontalStrategy.php");
-require_once(__DIR__."/VerticalBoundary.php");
+require_once __DIR__."/HorizontalStrategy.php";
+require_once __DIR__."/VerticalBoundary.php";
+require_once __DIR__."/ResetPoint.php";
 
 /*
  * LeftDiagonalStrategy has a verticalBoundary to keep track of the board's vertical boundary.
  * Inherits from HorizontalStrategy points that it will use to move to the left diagonally.
  */
 class LeftDiagonalStrategy extends HorizontalStrategy {
+    use ResetPoint;
     private VerticalBoundary $verticalBoundary;
-
-    /*
-     * Sets points back to their original position.
-     * @param: the $col and $row.
-     * @return: None.
-     */
-    function reset($row, $col) {
-        parent::reset($row, $col);
-        $this->setInitialY();
-    }
+//    function reset($row, $col) {
+//        parent::reset($row, $col);
+//        $this->setInitialY();
+//    }
 
     /*
      * Sets the y coordinates initially.

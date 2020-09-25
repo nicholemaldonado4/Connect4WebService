@@ -6,7 +6,7 @@
 // VerticalBoundary calculates the top and bottom boundary of the board with respect
 // to a give row.
 
-require_once(dirname(__DIR__)."/game/BoardDimension.php");
+require_once dirname(__DIR__)."/game/BoardDimension.php";
 
 /*
  * Keeps track of the top and bottom boundary that are 3 from the provided $row
@@ -43,5 +43,4 @@ class VerticalBoundary {
         return $this->bottomBoundary;
     }
 }
-
 ?>

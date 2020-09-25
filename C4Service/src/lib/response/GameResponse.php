@@ -30,6 +30,7 @@ class GameResponse implements JsonSerializable {
      * @return: An array with the field $response.
      */
     public function jsonSerialize() {
+        // NOTE: Do not use get_object_vars(), because we want them ordered. (response first).
         return array("response" => $this->response);
     }
 }

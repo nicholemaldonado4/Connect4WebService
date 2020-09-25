@@ -5,7 +5,7 @@
 // Dr. Cheon, CS3360
 // Keeps track of two points and moves the points horizontally within the board's range.
 
-require_once(dirname(__DIR__)."/game/BoardDimension.php");
+require_once dirname(__DIR__)."/game/BoardDimension.php";
 
 /*
  * HorizontalStrategy has two points and moves the points horizontally.
@@ -21,7 +21,16 @@ class HorizontalStrategy {
      * @param: the $col and $row.
      * @return: None.
      */
-    function reset($col, $row){
+    public function reset($col, $row){
+        $this->setPoints($col, $row);
+    }
+
+    /*
+     * Sets points.
+     * @param: the $col and $row.
+     * @return: None.
+     */
+    private function setPoints($col, $row) {
         $this->pt1 = array("x" => $col - 1, "y" => $row);
         $this->pt2 = array("x" => $col + 1, "y" => $row);
     }
@@ -35,8 +44,7 @@ class HorizontalStrategy {
     function __construct($col, $row) {
         $this->leftBoundary = max($col - 3, 0);
         $this->rightBoundary = min($col + 3, BoardDimension::WIDTH - 1);
-        self::reset($col, $row);
-
+        $this->setPoints($col, $row);
     }
 
     /*
@@ -55,7 +63,7 @@ class HorizontalStrategy {
      * @return: True if in the range, false otherwise.
      */
     public function compareBoth() {
-        return static::comparePt1() && static::comparePt2();
+        return $this->comparePt1() && $this->comparePt2();
     }
 
     /*
@@ -82,8 +90,8 @@ class HorizontalStrategy {
      * @return: None.
      */
     public function updateBoth() {
-        static::updatePt1();
-        static::updatePt2();
+        $this->updatePt1();
+        $this->updatePt2();
     }
 
     /*
@@ -122,12 +130,17 @@ class HorizontalStrategy {
         return $board[$this->pt2["y"]][$this->pt2["x"]];
     }
 
-    public function check(array $heights) {
-//        echo "horizontal check pt1: ({$this->pt1["x"]},{$this->pt1["y"]}), pt2:  ({$this->pt2["x"]},{$this->pt2["y"]})</br>";
-//        echo "heights at pt1: {$heights[$this->pt1["x"]]} </br>";
-//        echo "heights at pt2: {$heights[$this->pt2["x"]]} </br>";
-        if ((static::comparePt1() && $heights[$this->pt1["x"]] == $this->pt1["y"] + 1) ||
-            (static::comparePt2() && $heights[$this->pt2["x"]] == $this->pt2["y"] + 1)) {
+    /*
+     * Checks if we put a piece at $heights[$this->pt1["x"]] or
+     * $heights[$this->pt2["x"]], will the user be able to place at the
+     * corresponding y portion. Essentially checks if it is pointless to put piece
+     * here.
+     * @param: $heights array that stores the current heights of their column.
+     * @return: bool if good move or false otherwise.
+     */
+    public function checkFallThrough(array $heights) {
+        if (($this->comparePt1() && $heights[$this->pt1["x"]] == $this->pt1["y"] + 1) ||
+                ($this->comparePt2() && $heights[$this->pt2["x"]] == $this->pt2["y"] + 1)) {
             return true;
         }
         return false;

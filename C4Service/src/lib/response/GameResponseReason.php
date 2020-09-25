@@ -5,7 +5,7 @@
 // Dr. Cheon, CS3360
 // Response that stores the string $reason.
 
-require_once(__DIR__."/GameResponse.php");
+require_once __DIR__."/GameResponse.php";
 
 /*
  * Response that stores the string $reason and is derived from GameResponse, so it
@@ -31,7 +31,7 @@ class GameResponseReason extends GameResponse {
      * @return: An array with the $response before the $reason.
      */
     public function jsonSerialize() {
-        return parent::jsonSerialize() + array('reason' => $this->reason);
+        return parent::jsonSerialize() + get_object_vars($this);
     }
 }
 ?>

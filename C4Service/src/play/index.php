@@ -6,17 +6,17 @@
 // Main page for play/index.php that executes the simulation of the game, starting from creating the Game based
 // on the file, making the player and computer move, overwriting the new game, and outputting the moves to the screen.
 
-require_once(dirname(__DIR__)."/lib/game/BoardDimension.php");
-require_once(dirname(__DIR__)."/lib/game/Game.php");
-require_once(dirname(__DIR__)."/lib/game/GameWriter.php");
-require_once(dirname(__DIR__)."/lib/game/GameBuilder.php");
-require_once(dirname(__DIR__)."/lib/response/GameResponse.php");
-require_once(dirname(__DIR__)."/lib/response/GameResponseMove.php");
-require_once(dirname(__DIR__)."/lib/response/GameResponseReason.php");
-require_once(dirname(__DIR__)."/lib/strategies/MoveStrategy.php");
-require_once(dirname(__DIR__)."/lib/validator/Direction.php");
-require_once(dirname(__DIR__)."/lib/validator/MoveValidator.php");
-require_once(dirname(__DIR__)."/lib/validator/PieceColor.php");
+require_once dirname(__DIR__)."/lib/game/BoardDimension.php";
+require_once dirname(__DIR__)."/lib/game/Game.php";
+require_once dirname(__DIR__)."/lib/game/GameWriter.php";
+require_once dirname(__DIR__)."/lib/game/GameBuilder.php";
+require_once dirname(__DIR__)."/lib/response/GameResponse.php";
+require_once dirname(__DIR__)."/lib/response/GameResponseMove.php";
+require_once dirname(__DIR__)."/lib/response/GameResponseReason.php";
+require_once dirname(__DIR__)."/lib/strategies/MoveStrategy.php";
+require_once dirname(__DIR__)."/lib/validator/Direction.php";
+require_once dirname(__DIR__)."/lib/validator/MoveValidator.php";
+require_once dirname(__DIR__)."/lib/validator/PieceColor.php";
 
 /*
  * Class that executes the simulation of the game, starting from creating the Game based on the file,
@@ -96,7 +96,7 @@ class GamePlay implements BoardDimension, PieceColor, Direction {
 
         // See if the move is a winning move. Create a Move based on the move and add the piece to the board.
         list($direction, $start) = $this->moveValidator->validateMove($this->game->getBoard(), $move,
-                new ValidatorSettings(false, false, PieceColor::USER));
+                new ValidatorSettings(PieceColor::USER));
         $this->moveValidator->decrHeightForCol($move);
         $this->game->addPieceToBoard($newHeight, $move, PieceColor::USER);
         $ackMove = $this->moveValidator->populateMoveFromDirection($direction, $start, $move);
@@ -109,7 +109,6 @@ class GamePlay implements BoardDimension, PieceColor, Direction {
      * @return: True if the move occurred, otherwise false.
      */
     private function executeStrategy(&$compMove) {
-
         // We are expecting a move to occur or a draw. However, if we find that we cannot move,
         // then this means that the files were tampered with between the checks from the user to the computer.
         // Store error.

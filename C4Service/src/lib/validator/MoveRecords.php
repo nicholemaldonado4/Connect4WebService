@@ -5,7 +5,7 @@
 // Dr. Cheon, CS3360
 // Keeps records for block move, no win move, and default move.
 
-require_once(__DIR__."/Record.php");
+require_once __DIR__."/Record.php";
 
 /*
  * Keeps records for block move, no win move, and default move,
@@ -31,8 +31,8 @@ class MoveRecords {
     }
 
     /*
-     * Given an index, stores the $directionSlot and $col at the index.
-     * @param: An index from 0 - 2, the $directionSlot and $col.
+     * Given an index, stores the $record at the index.
+     * @param: An index from 0 - 2, the $record
      * @return: None.
      */
     private function setRecord($index, Record $record) {
@@ -42,7 +42,7 @@ class MoveRecords {
 
     /*
      * Sets the block move.
-     * @param: The $directionSlot and $col associated with the move.
+     * @param: The $record associated with the move.
      * @return: None.
      */
     function setBlock(Record $record){
@@ -51,7 +51,7 @@ class MoveRecords {
 
     /*
      * Sets the no win move.
-     * @param: The $directionSlot and $col associated with the move.
+     * @param: The $record associated with the move.
      * @return: None.
      */
     function setNoWin(Record $record){
@@ -60,21 +60,36 @@ class MoveRecords {
 
     /*
      * Sets the default move.
-     * @param: The $directionSlot and $col associated with the move.
+     * @param: The $record associated with the move.
      * @return: None.
      */
     function setDefault(Record $record){
         $this->setRecord(2, $record);
     }
 
+    /*
+     * Gets the block move.
+     * @param: None.
+     * @return: the block move record.
+     */
     function getBlock() {
         return $this->records[0];
     }
 
+    /*
+     * Gets the no win move.
+     * @param: None.
+     * @return: the no win move record.
+     */
     function getNoWin() {
         return $this->records[1];
     }
 
+    /*
+     * Gets the default move.
+     * @param: None.
+     * @return: the default move record.
+     */
     function getDefault() {
         return $this->records[2];
     }
@@ -87,7 +102,6 @@ class MoveRecords {
     function getRecordCol($index) {
         return $this->records[$index]->getCol();
     }
-
 
     /*
      * Returns the index of the record that is populated. The record has the
@@ -105,5 +119,4 @@ class MoveRecords {
         return -1;
     }
 }
-
 ?>

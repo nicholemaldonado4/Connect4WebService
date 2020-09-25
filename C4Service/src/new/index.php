@@ -7,7 +7,7 @@
 // calculated pid and stores the strategy denoted based on the html query. Does this by
 // calling GameWriter's createGame.
 
-require_once(dirname(__DIR__)."/lib/game/GameWriter.php");
+require_once dirname(__DIR__)."/lib/game/GameWriter.php";
 
 // Create game and display creation (or error if it occurs).
 $gameWriter = new GameWriter;

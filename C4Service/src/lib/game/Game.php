@@ -5,10 +5,10 @@
 // Dr. Cheon, CS3360
 // Game class to store board and strategy.
 
-require_once(__DIR__."/BoardDimension.php");
-require_once(dirname(__DIR__) . "/strategies/MoveStrategy.php");
-require_once(dirname(__DIR__)."/strategies/SmartStrategy.php");
-require_once(dirname(__DIR__)."/strategies/RandomStrategy.php");
+require_once __DIR__."/BoardDimension.php";
+require_once dirname(__DIR__) . "/strategies/MoveStrategy.php";
+require_once dirname(__DIR__)."/strategies/SmartStrategy.php";
+require_once dirname(__DIR__)."/strategies/RandomStrategy.php";
 
 /*
  * Game class stores a board and a smart strategy or random strategy.

@@ -5,7 +5,7 @@
 // Dr. Cheon, CS3360
 // Response that stores the string $pid.
 
-require_once(__DIR__."/GameResponse.php");
+require_once __DIR__."/GameResponse.php";
 
 /*
  * Response that stores the string $pid and is derived from GameResponse, so it
@@ -31,7 +31,7 @@ class GameResponsePid extends GameResponse {
      * @return: An array with the $response before the $pid.
      */
     public function jsonSerialize() {
-        return parent::jsonSerialize() + array('pid' => $this->pid);
+        return parent::jsonSerialize() + get_object_vars($this);
     }
 }
 ?>

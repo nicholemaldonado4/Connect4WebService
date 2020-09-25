@@ -3,14 +3,12 @@
 // Lab 1 - Record
 // September 18, 2020
 // Dr. Cheon, CS3360
-// Stores a directionSlot and col.
+// Stores a precedence and col.
 
-require_once(__DIR__."/Precedence.php");
-require_once(__DIR__."/Direction.php");
-
+require_once __DIR__."/Precedence.php";
+require_once __DIR__."/Direction.php";
 /*
- * Record stores a $directionSlot with consists of a [Direction, slotNumStart]
- * and a col.
+ * Record stores a $precedence of the move and $col of the move.
  */
 class Record{
     private int $col;
@@ -18,12 +16,19 @@ class Record{
 
     /*
      * Default constructor that set $col to -1.
+     * @param: None
+     * @return: None.
      */
     function __construct() {
         $this->col = -1;
         $this->precedence = Precedence::NONE;
     }
 
+    /*
+     * Populates a record with the $col and $precedence.
+     * @param: The $col and $precedence of the move.
+     * @return: The populated record.
+     */
     static function populateRecord($col, $precedence = Precedence::FOUR) {
         $record = new Record();
         $record->setCol($col);
@@ -40,6 +45,11 @@ class Record{
         return $this->col;
     }
 
+    /*
+     * Getter for field $precedence.
+     * @param: None.
+     * @return: The $col.
+     */
     function getPrecedence() {
         return $this->precedence;
     }
@@ -53,7 +63,11 @@ class Record{
         $this->col = $col;
     }
 
-
+    /*
+     * Setter for field $precedence.
+     * @param: The $precedence to set the field to.
+     * @return: None.
+     */
     function setPrecedence($precedence) {
         $this->precedence = $precedence;
     }

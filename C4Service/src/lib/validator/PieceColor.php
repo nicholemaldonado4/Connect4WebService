@@ -16,5 +16,4 @@ interface PieceColor {
     const USER = 1;
     const COMPUTER = 2;
 }
-
 ?>

@@ -6,11 +6,11 @@
 // GameWriter creates a game and stores the game in <pid>.txt, where pid is a uniquely
 // calculated pid. Provides static write file functions to be used by play/index.php.
 
-require_once(dirname(__DIR__)."/game/Game.php");
-require_once(dirname(__DIR__)."/response/GameResponsePid.php");
-require_once(dirname(__DIR__)."/response/GameResponseReason.php");
-require_once(dirname(__DIR__)."/strategies/StrategyType.php");
-require_once(dirname(__DIR__)."/fileutils/FileConstants.php");
+require_once __DIR__."/Game.php";
+require_once dirname(__DIR__)."/response/GameResponsePid.php";
+require_once dirname(__DIR__)."/response/GameResponseReason.php";
+require_once dirname(__DIR__)."/strategies/StrategyType.php";
+require_once dirname(__DIR__)."/fileutils/FileConstants.php";
 
 define('STRATEGY', "strategy");
 
@@ -51,8 +51,11 @@ class GameWriter {
         $filePointer = fopen($fileName, "w");
         if (!$filePointer) {
             $response = new GameResponseReason(false, "Failed to store game data.");
+            return;
         }
-        fwrite($filePointer, json_encode($game));
+        if (fwrite($filePointer, json_encode($game)) === false) {
+            $response = new GameResponseReason(false, "Failed to store game data.");
+        }
         fclose($filePointer);
     }
 

@@ -6,8 +6,8 @@
 // Main page for info that prints out the size of the game board
 // and the strategies available.
 
-require_once(dirname(__DIR__)."/lib/game/BoardDimension.php");
-require_once(dirname(__DIR__)."/lib/strategies/StrategyType.php");
+require_once dirname(__DIR__)."/lib/game/BoardDimension.php";
+require_once dirname(__DIR__)."/lib/strategies/StrategyType.php";
 
 /*
  * Stores the width and height of the board. Also stores the available strategies

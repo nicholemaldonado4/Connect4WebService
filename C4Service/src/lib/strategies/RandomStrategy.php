@@ -6,11 +6,11 @@
 // RandomStrategy randomly selects a column to place a connect four piece and returns the
 // resulting Move based on the move.
 
-require_once(__DIR__ . "/MoveStrategy.php");
-require_once(dirname(__DIR__)."/game/Game.php");
-require_once(dirname(__DIR__) . "/strategies/Move.php");
-require_once(dirname(__DIR__)."/validator/MoveValidator.php");
-require_once(dirname(__DIR__)."/validator/ValidatorSettings.php");
+require_once __DIR__ . "/MoveStrategy.php";
+require_once dirname(__DIR__)."/game/Game.php";
+require_once __DIR__."/Move.php";
+require_once dirname(__DIR__)."/validator/MoveValidator.php";
+require_once dirname(__DIR__)."/validator/ValidatorSettings.php";
 
 /*
  * RandomStrategy randomly selects a column to place a connect four piece and returns the
@@ -30,7 +30,7 @@ class RandomStrategy extends MoveStrategy {
      *          would realize that all the spots were filled even though at least one empty spot was expected.
      */
     public function pickSlot(Game $game, MoveValidator $moveValidator, &$compMove) {
-        $combos = [0,1,2,3,4,5,6];
+        $combos = range(0, BoardDimension::WIDTH - 1);
 
         // Continuously pick a random index from $combos, until we find a column that we can put a piece in.
         // We use combos to ensure that we never look for the same height twice.
@@ -44,7 +44,7 @@ class RandomStrategy extends MoveStrategy {
             if ($newHeight >= 0 && $game->getBoard()[$newHeight][$combos[$randIndex]] == 0) {
                 list($direction, $start) = $moveValidator->validateMove($game->getBoard(),
                         $combos[$randIndex],
-                        new ValidatorSettings(false, false, PieceColor::COMPUTER));
+                        new ValidatorSettings(PieceColor::COMPUTER));
                 $moveValidator->decrHeightForCol($combos[$randIndex]);
                 $game->addPieceToBoard($newHeight, $combos[$randIndex], PieceColor::COMPUTER);
                 $compMove = $moveValidator->populateMoveFromDirection($direction, $start, $combos[$randIndex]);

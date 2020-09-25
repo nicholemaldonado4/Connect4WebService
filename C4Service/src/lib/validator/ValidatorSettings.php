@@ -8,17 +8,17 @@
 // considered to have a user's piece. If the board has a 2, then the slot is considered to
 // have a computer's piece.
 
-require_once(__DIR__."/PieceColor.php");
-require_once(__DIR__."/Direction.php");
+require_once __DIR__."/PieceColor.php";
+require_once __DIR__."/Direction.php";
 
 /*
  * Stores a blockRequest and reply and the piece color
  * to place in the board.
  */
 class ValidatorSettings implements PieceColor {
+    private int $pieceColor;
     private bool $blockRequest;
     private bool $blockReply;
-    private int $pieceColor;
 
     /*
      * Constructor that stores the $blockRequest, $blockReply, and $pieceColor.
@@ -26,10 +26,10 @@ class ValidatorSettings implements PieceColor {
      *         the reply of this request, and piece color of the piece.
      * @return: None.
      */
-    public function __construct($blockRequest, $blockReply, $pieceColor) {
+    public function __construct($pieceColor, $blockRequest = false, $blockReply = false) {
+        $this->pieceColor = $pieceColor;
         $this->blockRequest = $blockRequest;
         $this->blockReply = $blockReply;
-        $this->pieceColor = $pieceColor;
     }
 
     /*
@@ -86,5 +86,4 @@ class ValidatorSettings implements PieceColor {
         return $this->pieceColor;
     }
 }
-
 ?>

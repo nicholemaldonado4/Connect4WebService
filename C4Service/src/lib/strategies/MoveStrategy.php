@@ -6,11 +6,11 @@
 // Abstract class for strategies that use execute to make a computer move
 // for connect four.
 
-require_once(dirname(__DIR__)."/game/BoardDimension.php");
-require_once(dirname(__DIR__)."/game/Game.php");
-require_once(dirname(__DIR__)."/validator/PieceColor.php");
-require_once(dirname(__DIR__)."/validator/Direction.php");
-require_once(dirname(__DIR__)."/validator/MoveValidator.php");
+require_once dirname(__DIR__)."/game/BoardDimension.php";
+require_once dirname(__DIR__)."/game/Game.php";
+require_once dirname(__DIR__)."/validator/PieceColor.php";
+require_once dirname(__DIR__)."/validator/Direction.php";
+require_once dirname(__DIR__)."/validator/MoveValidator.php";
 
 /*
  * MoveStrategy that serves as the base class for RandomStrategy and

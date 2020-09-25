@@ -6,8 +6,7 @@
 // Contains a constant array that maps the strategy name with its corresponding
 // class name.
 
-abstract class StrategyType
-{
+abstract class StrategyType {
     const STRATEGIES = array("Smart" => "SmartStrategy", "Random" => "RandomStrategy");
 }
 ?>

@@ -6,12 +6,12 @@
 // GameBuilder reads a .txt file name after the pid and constructs a Game
 // object based on the file's contents.
 
-require_once(__DIR__."/Game.php");
-require_once(dirname(__DIR__)."/response/GameResponseReason.php");
-require_once(dirname(__DIR__)."/strategies/RandomStrategy.php");
-require_once(dirname(__DIR__)."/strategies/SmartStrategy.php");
-require_once(dirname(__DIR__)."/strategies/MoveStrategy.php");
-require_once(dirname(__DIR__)."/fileutils/FileConstants.php");
+require_once __DIR__."/Game.php";
+require_once dirname(__DIR__)."/response/GameResponseReason.php";
+require_once dirname(__DIR__)."/strategies/RandomStrategy.php";
+require_once dirname(__DIR__)."/strategies/SmartStrategy.php";
+require_once dirname(__DIR__)."/strategies/MoveStrategy.php";
+require_once dirname(__DIR__)."/fileutils/FileConstants.php";
 
 /*
  * Reads a .txt file located in src/writable and name after the pid.
@@ -67,13 +67,17 @@ class GameBuilder {
         // Check that the file name does not already exist to prevent races.
         if (file_exists($this->fileName) && !is_dir($this->fileName)) {
             $fp = fopen($this->fileName, "r");
-            if ( !$fp ) {
+            if (!$fp) {
                 $response = new GameResponseReason(false, "Failed to read the game in the file.");
                 return false;
             }
 
             // Read from the file and use the information to construct a Game object.
             $gameTxt = fread($fp, filesize($this->fileName));
+            if ($gameTxt === false) {
+                $response = new GameResponseReason(false, "Failed to read the game in the file.");
+                return false;
+            }
             fclose($fp);
             return $this->parseGame(json_decode($gameTxt), $response);
         }

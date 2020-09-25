@@ -6,12 +6,13 @@
 // Evaluates putting a piece at the top of each column. Tries to make a winning move first. If one does not exist,
 // then makes a blocking move. If neither exists, then just makes a regular move.
 
-require_once(__DIR__ . "/MoveStrategy.php");
-require_once(dirname(__DIR__)."/validator/MoveRecords.php");
-require_once(dirname(__DIR__)."/game/Game.php");
-require_once(dirname(__DIR__)."/strategies/Move.php");
-require_once(dirname(__DIR__)."/validator/MoveValidator.php");
-require_once(dirname(__DIR__)."/validator/ValidatorSettings.php");
+require_once __DIR__ . "/MoveStrategy.php";
+require_once dirname(__DIR__)."/validator/MoveRecords.php";
+require_once dirname(__DIR__)."/game/Game.php";
+require_once __DIR__."/Move.php";
+require_once dirname(__DIR__)."/validator/MoveValidator.php";
+require_once dirname(__DIR__)."/validator/ValidatorSettings.php";
+require_once dirname(__DIR__)."/validator/Precedence.php";
 
 /*
  * Evaluates putting a piece at the top of each column. If the computer can win, makes this move. If
@@ -36,7 +37,7 @@ class SmartStrategy extends MoveStrategy {
     /*
      * Add-on of the Smart strategy. Determines if we put the piece in $col, will the user
      * be able to win on the next game.
-     * @param: The $moveValidator, $originalHeight to put the piece, the $col, and $game.
+     * @param: The $moveValidator, $origHeight to put the piece, the $col, and $game.
      * @return: False if placing a piece in column will allow the user to win next time.
      *          True otherwise.
      */
@@ -47,12 +48,10 @@ class SmartStrategy extends MoveStrategy {
 
         // See that if the computer does put a piece in col, if the user will be
         // able to make a winning move above it.
-        $directionStart = $moveValidator->validateMove($game->getBoard(), $col, new ValidatorSettings(false, false, PieceColor::USER));
-        if ($directionStart[0] != Direction::NONE) {
+        $resultRecord = $moveValidator->validateMove($game->getBoard(), $col, new ValidatorSettings(PieceColor::USER));
+        if ($resultRecord[0] != Direction::NONE) {
             $goodMove = false;
         }
-
-
         $game->addPieceToBoard($origHeight, $col, PieceColor::EMPTY);
         $moveValidator->incrHeightForCol($col);
         return $goodMove;
@@ -75,8 +74,8 @@ class SmartStrategy extends MoveStrategy {
         // unable to find a winning move, then we use the block move. If we are unable to block, then we just
         // move to any location that we found.
         $records = new MoveRecords();
-        $combos = [0,1,2,3,4,5,6];
-        $validatorSettings = new ValidatorSettings(true, false, PieceColor::COMPUTER);
+        $combos = range(0, BoardDimension::WIDTH - 1);
+        $validatorSettings = new ValidatorSettings(PieceColor::COMPUTER, true);
 
         // Repeatedly look at columns for a winning move. Randomize the columns we search for, but unlike random,
         // we will look at all the columns unless we find a winning move.
@@ -88,48 +87,38 @@ class SmartStrategy extends MoveStrategy {
             if ($newHeight >= 0 && $game->getBoard()[$newHeight][$combos[$randIndex]] == 0) {
                 $resultRecord = $moveValidator->validateMove($game->getBoard(), $combos[$randIndex], $validatorSettings);
 
-                // If precedence > records->blockPrecedence(), then save as block request.
-                // If precedence == 3, then turn of blockRequest and set block reply to false,
-                // If precedence < 3, set blockReply to false.
-
-                // If we requested a blocking move and the block reply is true and the direction is not none,
-                // then we know that we found a blocking move, so store it in case we can't find a winning move.
+                // Found blocking move.
                 if ($validatorSettings->getBlockRequest() && $validatorSettings->getBlockReply()) {
                     $validatorSettings->setBlockReply(false);
+
+                    // Found block move of the highest precedence so stop all other move requests.
                     if ($resultRecord[1]->getPrecedence() == Precedence::THREE) {
                         $records->setBlock($resultRecord[1]);
-                        // We already found a block so stop requests. (Decreases runtime).
                         $validatorSettings->setBlockRequest(false);
-//                        echo "final block</br>";
                     }
+                    // Otherwise, store higher precedence block move.
                     else if ($resultRecord[1]->getPrecedence() > $records->getBlock()->getPrecedence()) {
                         $records->setBlock($resultRecord[1]);
-//                        echo "higher precedence block</br>";
                     }
                 }
-                // Otherwise, if the direction is not NONE, then the move was a winning move. Make the remove and
-                // return.
+                // If the direction is not NONE, then the move was a winning move. Make the move and return.
                 else if ($resultRecord[0] != Direction::NONE) {
                     $this->getCompMove($moveValidator, $newHeight, $combos[$randIndex], $resultRecord[0],
                             $resultRecord[1], $compMove, $game);
                     return true;
                 }
 
-                // From here rather than foundNoWin, instead check to see if precdence > foundNoWin's precedence.
-
-                // If we have not found a blocking move or a winning move, then store the move. In the worst case,
-                // we will make this move.
+                // If we have found a higher precedence non-win/block move, store it.
                 else if ($resultRecord[1]->getPrecedence() > $records->getNoWin()->getPrecedence()) {
-//                    echo "looking at precedence</br>";
+
+                    // If user can't win by placing the piece here, then store in noWin, otherwise, set as
+                    // default.
                     if ($newHeight > 0 && !$this->imaginaryCheck($moveValidator, $newHeight, $combos[$randIndex], $game)) {
-//                        echo "Imaginary check did not work</br>";
                         if ($resultRecord[1]->getPrecedence() > $records->getDefault()->getPrecedence()) {
-//                            echo "setting default";
                             $records->setDefault($resultRecord[1]);
                         }
                     }
                     else {
-//                        echo "Setting no win</br>";
                         $records->setNoWin($resultRecord[1]);
                     }
                 }
