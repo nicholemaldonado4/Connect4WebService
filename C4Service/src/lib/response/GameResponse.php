@@ -2,7 +2,6 @@
 // Nichole Maldonado
 // Lab 1 - GameResponse
 // September 7, 2020
-// Dr. Cheon, CS3360
 // GameResponse stores a response boolean that determines if an interaction was
 // successful or not.
 
