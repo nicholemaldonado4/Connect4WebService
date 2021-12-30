@@ -2,7 +2,6 @@
 // Nichole Maldonado
 // Lab 1 - Game
 // September 7, 2020
-// Dr. Cheon, CS3360
 // Game class to store board and strategy.
 
 require_once __DIR__."/BoardDimension.php";
