@@ -2,7 +2,6 @@
 // Nichole Maldonado
 // Lab 1 - BoardDimension
 // September 7, 2020
-// Dr. Cheon, CS3360
 // BoardDimension defines constants for the board width and height.
 
 /*
