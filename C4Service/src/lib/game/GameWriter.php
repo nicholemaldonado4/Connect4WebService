@@ -2,7 +2,6 @@
 // Nichole Maldonado
 // Lab 1 - GameWriter
 // September 7, 2020
-// Dr. Cheon, CS3360
 // GameWriter creates a game and stores the game in <pid>.txt, where pid is a uniquely
 // calculated pid. Provides static write file functions to be used by play/index.php.
 
