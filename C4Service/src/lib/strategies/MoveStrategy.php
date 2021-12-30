@@ -2,7 +2,6 @@
 // Nichole Maldonado
 // Lab 1 - Strategies
 // September 7, 2020
-// Dr. Cheon, CS3360
 // Abstract class for strategies that use execute to make a computer move
 // for connect four.
 
