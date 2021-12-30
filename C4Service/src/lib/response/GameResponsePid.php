@@ -2,7 +2,6 @@
 // Nichole Maldonado
 // Lab 1 - GameResponsePid
 // September 7, 2020
-// Dr. Cheon, CS3360
 // Response that stores the string $pid.
 
 require_once __DIR__."/GameResponse.php";
