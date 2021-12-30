@@ -2,7 +2,6 @@
 // Nichole Maldonado
 // Lab 1 - GameBuilder
 // September 7, 2020
-// Dr. Cheon, CS3360
 // GameBuilder reads a .txt file name after the pid and constructs a Game
 // object based on the file's contents.
 
