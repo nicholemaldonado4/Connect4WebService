@@ -2,7 +2,6 @@
 // Nichole Maldonado
 // Lab 1 - SmartStrategy
 // September 7, 2020
-// Dr. Cheon, CS3360
 // Evaluates putting a piece at the top of each column. Tries to make a winning move first. If one does not exist,
 // then makes a blocking move. If neither exists, then just makes a regular move.
 
