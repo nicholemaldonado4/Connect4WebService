@@ -2,7 +2,6 @@
 // Nichole Maldonado
 // Lab 1 - RandomStrategy
 // September 7, 2020
-// Dr. Cheon, CS3360
 // RandomStrategy randomly selects a column to place a connect four piece and returns the
 // resulting Move based on the move.
 
