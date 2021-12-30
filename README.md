@@ -63,7 +63,7 @@ Following the REST principles, the web service provides the following three URLs
 
 Start the PHP server and access the following pages, in order:
 
-Step 1: visit http://<c4-home>/info to find game info
-Step 2: visit http://<c4-home>/new?strategy=s to create a new game
-Step 3: repeatedly visit http://<c4-home>/play?pid=p&move=x
+Step 1: visit http://<c4-home>/info to find game info\
+Step 2: visit http://<c4-home>/new?strategy=s to create a new game\
+Step 3: repeatedly visit http://<c4-home>/play?pid=p&move=x\
         to drop a disc
