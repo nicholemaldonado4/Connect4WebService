@@ -2,7 +2,6 @@
 // Nichole Maldonado
 // Lab 1 - info/index.php
 // September 7, 2020
-// Dr. Cheon, CS3360
 // Main page for info that prints out the size of the game board
 // and the strategies available.
 
