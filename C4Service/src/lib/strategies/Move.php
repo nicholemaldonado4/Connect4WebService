@@ -2,7 +2,6 @@
 // Nichole Maldonado
 // Lab 1 - Move
 // September 7, 2020
-// Dr. Cheon, CS3360
 // GameBuilder stores the $slot, $isWin, $isDraw, and $row based on a move.
 
 /*
