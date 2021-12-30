@@ -2,7 +2,6 @@
 // Nichole Maldonado
 // Lab 1 - FileConstants
 // September 15, 2020
-// Dr. Cheon, CS3360
 // Define constants for the extension of .txt and the directory for
 // writable files.
 
